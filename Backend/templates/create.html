@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST" id="addform">
+        {% csrf_token% }
+
+        <input type="text" name="title" id="title" required>
+        <input type="text" name="description" id="description" required>
+        <input type="checkbox" name="completed" id="completed" required>
+        <button type="submit">submit</button>
+    </form>
+    <script>
+        document.getElementById('addform').addEventListener('submit',function(event){
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const completed = document.getElementById('completed').checked;
+
+            fetch('http://127.0.0.1:8000/api/create/',{
+                method:'POST',
+                headers : {
+                    "content-type":"application/json",
+                    "X-CSRFToken":"{{csrf_token}}",
+                },
+                body:JSON.stringify({
+                    title:title,
+                    description:description,
+                    completed:completed
+                })
+            })
+            .then(response=>{
+                if(!response.ok){
+                    throw new Error('network response not ok')
+                }
+                response.json();
+
+        })
+            .then(data=>{
+                console.log(data)
+                alert('todo item added !')
+            })
+            .catch(error=>{
+                console.log(error);
+                alert('failed check console')
+            })
+            document.getElementById('addform').reset()
+            
+        })
+    </script>
+</body>
+</html>
