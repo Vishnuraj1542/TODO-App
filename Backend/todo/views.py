@@ -1,13 +1,18 @@
 from django.shortcuts import render,HttpResponse
 from rest_framework.views import APIView
 from .models import List
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from .serializers import ListSerializer
 
 
 # Create your views here.
 class CreateListApi(APIView):
+    permission_classes=[permissions.AllowAny]
+    def get(self,request):
+        data=List.objects.all()
+        serializer=ListSerializer(data,many=True)
+        return Response(serializer.data)
     def post(self,request):
         serializer=ListSerializer(data=request.data)
         if serializer.is_valid():
